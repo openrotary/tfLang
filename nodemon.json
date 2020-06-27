@@ -1,0 +1,5 @@
+{
+  "watch": ["./"],
+  "ext": ".pl",
+  "exec": "node ./index table.tf table.vue"
+}

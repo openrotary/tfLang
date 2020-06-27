@@ -1,0 +1,17 @@
+{
+  "name": "tf-lang",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon"
+  },
+  "bin": {
+    "tf": "index.js"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5"
+  }
+}

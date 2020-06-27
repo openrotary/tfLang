@@ -1,0 +1,13 @@
+# 值绑定是默认的
+
+<Form :model="formData" label-position="left" :label-width="100">
+    <FormItem label="Title">
+        <Input v-model="formLeft.user"></Input>
+    </FormItem>
+    <FormItem label="Title name">
+        <Input v-model="formLeft.input2"></Input>
+    </FormItem>
+    <FormItem label="Aligned title">
+        <Input v-model="formLeft.input3"></Input>
+    </FormItem>
+</Form>
