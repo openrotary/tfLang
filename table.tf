@@ -1,4 +1,4 @@
-!table border
+#! border
 
 | :selection / * | width(60)
 

@@ -2,7 +2,7 @@
 
 const exec = require("child_process").exec;
 const prettier = require("prettier");
-const [node, script, read_url, write_url] = process.argv;
+const [node, script, html_type, read_url, write_url] = process.argv;
 
 if (!read_url) {
   console.log("请输入读文件路径");
@@ -13,7 +13,7 @@ if (!write_url) {
   return;
 }
 exec(
-  `perl ${__dirname}/go.pl ${read_url} ${write_url}`,
+  `perl ${__dirname}/go.pl ${html_type} ${read_url} ${write_url}`,
   (err, stdout, stderr) => {
     if (err) {
       console.log(err);
