@@ -13,4 +13,4 @@
 
 | #action / Action |
 > Button type(primary) size(small) @click(show(index)) : View
-#> Button type(danger) size(small) @click(delete(index)) : Delete
+    >> Button type(danger) size(small) @click(delete(index)) : Delete
