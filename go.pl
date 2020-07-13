@@ -3,6 +3,9 @@
 use strict;
 use feature qw(say);
 use Data::Dumper;
+use JSON;
+
+my $json = new JSON;
 
 my ($html_type, $read_url) = @ARGV;
 
@@ -28,14 +31,76 @@ sub dom_func {
 		}
 
 		# get Dom length
-		my $len = length @html_stack;
+		my $len = length scalar(@html_stack);
 		if($floor > $len) {
 			push @html_stack, \%$hash;
 		}
 
 		# push @dom, \%hash;
-		print print Dumper \%$hash;
+		print Dumper \%$hash;
 	}
+}
+
+if($html_type eq '-f') {
+	my %data_hash = ();
+	my %currData = ();
+	my $key_type = 1;
+	my %key_type_hash = (
+		'select' => 2,
+		'radio' => 3,
+		'checkbox' => 4,
+		'my' => 5
+	);
+
+	while(<READ>) {
+		if(!(trim $_)) {
+			# 判断本行是否为空
+			# 如果为空，重置key_type
+			$key_type = 1;
+			if(%currData) {
+				push @{$data_hash{"root"}->{"children"}}, {%currData};
+			}
+			%currData = ();
+			next;
+		}
+		if($_ =~ /\#\!/) {
+			my @attr = split(' ', trim($'));
+			$data_hash{'root'} = {
+				'type' => 'form',
+				'attr' => [@attr],
+				'children' => []
+			};
+
+			# print Dumper(\%data_hash);
+			next;
+		}
+		if($_ =~ /\@(select|radio|checkbox|my)/) {
+			$_ =~ s/\@//;
+			$key_type = $key_type_hash{trim($_)};
+			next;
+		}
+		if($_ =~ /^-\s/) {
+			my ($key, $label_placehoder) = split '/', $';
+			my ($label, $placehoder) = $label_placehoder ? (split ':', $label_placehoder) : $key;
+			$key =~ s/\-//;
+			%currData = (
+				'type' => $key_type,
+				'label' => trim($label),
+				'key' => trim($key),
+				'placehoder' => $placehoder ? trim($placehoder) : '',
+			);
+			# print Dumper(\%currData);
+			next;
+		}
+		if($_ =~ /^~\s/) {
+			my ($valid, $warn) = split ':', $';
+			$currData{'valid'} = [split ' ', $valid];
+			$currData{'warn'} = trim $warn;
+			# print Dumper(\%currData);
+		}
+	}
+	my $text = $json->encode(\%data_hash);
+	print "$text";
 }
 
 if($html_type eq '-t') {
