@@ -1,5 +1,5 @@
 {
   "watch": ["./"],
-  "ext": ".pl",
+  "ext": "js,pl",
   "exec": "node ./index -f form.tf form.vue"
 }

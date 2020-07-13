@@ -19,6 +19,28 @@ sub trim {
 }
 
 
+sub delC {
+	my $s = shift;
+	$s =~ /\(([^()]|(?R))*?\)/;
+	my $val = $&;
+	my $key = $`;
+	$val =~ s/(^\(|\)$)//g;
+	my $res = "$key=\"$val\"";
+	return $res;
+}
+
+
+sub transRule {
+	my $s = shift;
+	$s =~ /\(([^()]|(?R))*?\)/;
+	my $val = $&;
+	my $key = $`;
+	$val =~ s/(^\(|\)$)//g;
+	$key =~ s/\!/trigger/;
+	return "$key\: $val";
+}
+
+
 sub dom_func {
 	my @html_stack = ();
 	my $currfloor = 0;
@@ -44,19 +66,21 @@ sub dom_func {
 if($html_type eq '-f') {
 	my %data_hash = ();
 	my %currData = ();
-	my $key_type = 1;
+	my $key_type = 'input';
 	my %key_type_hash = (
-		'select' => 2,
-		'radio' => 3,
-		'checkbox' => 4,
-		'my' => 5
+		'input' => 'Input',
+		'select' => 'Select',
+		'radio' => 'Radio',
+		'checkbox' => 'Checkbox',
+		'my' => 'template'
 	);
 
 	while(<READ>) {
 		if(!(trim $_)) {
+
 			# 判断本行是否为空
 			# 如果为空，重置key_type
-			$key_type = 1;
+			$key_type = 'input';
 			if(%currData) {
 				push @{$data_hash{"root"}->{"children"}}, {%currData};
 			}
@@ -64,9 +88,12 @@ if($html_type eq '-f') {
 			next;
 		}
 		if($_ =~ /\#\!/) {
-			my @attr = split(' ', trim($'));
+			my @att = split(' ', trim $');
+
+			# my $attr = $' =~ /\(([^()]|(?R))*?\)/;
+			my @attr = map { delC $_ } @att;
 			$data_hash{'root'} = {
-				'type' => 'form',
+				'tag' => 'form',
 				'attr' => [@attr],
 				'children' => []
 			};
@@ -84,21 +111,31 @@ if($html_type eq '-f') {
 			my ($label, $placehoder) = $label_placehoder ? (split ':', $label_placehoder) : $key;
 			$key =~ s/\-//;
 			%currData = (
-				'type' => $key_type,
+				'tag' => $key_type_hash{$key_type},
 				'label' => trim($label),
 				'key' => trim($key),
 				'placehoder' => $placehoder ? trim($placehoder) : '',
+				'rules' => []
 			);
+
 			# print Dumper(\%currData);
 			next;
 		}
 		if($_ =~ /^~\s/) {
 			my ($valid, $warn) = split ':', $';
-			$currData{'valid'} = [split ' ', $valid];
-			$currData{'warn'} = trim $warn;
-			# print Dumper(\%currData);
+			my @valid_list = split ' ', $valid;
+			my @valid = map {transRule $_} @valid_list;
+			my %rule = (
+				'warn'=> trim($warn),
+				'valid'=> [@valid]
+			);
+			push @{$currData{'rules'}}, {%rule};
+			next;
 		}
 	}
+
+	# my $text = $json->pretty->encode(\%data_hash);
+
 	my $text = $json->encode(\%data_hash);
 	print "$text";
 }
