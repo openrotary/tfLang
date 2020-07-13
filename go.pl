@@ -32,11 +32,12 @@ sub delC {
 
 sub transRule {
 	my $s = shift;
+	$s =~ s/\!\!/required(true)/;
 	$s =~ /\(([^()]|(?R))*?\)/;
 	my $val = $&;
 	my $key = $`;
 	$val =~ s/(^\(|\)$)//g;
-	$key =~ s/\!/trigger/;
+	$key =~ s/(on|when)/trigger/;
 	return "$key\: $val";
 }
 
@@ -59,7 +60,7 @@ sub dom_func {
 		}
 
 		# push @dom, \%hash;
-		print Dumper \%$hash;
+		# print Dumper \%$hash;
 	}
 }
 
@@ -107,9 +108,7 @@ if($html_type eq '-f') {
 			next;
 		}
 		if($_ =~ /^-\s/) {
-			my ($key, $label_placehoder) = split '/', $';
-			my ($label, $placehoder) = $label_placehoder ? (split ':', $label_placehoder) : $key;
-			$key =~ s/\-//;
+			my ($label, $key, $placehoder) = split /[:\/]/, $';
 			%currData = (
 				'tag' => $key_type_hash{$key_type},
 				'label' => trim($label),
@@ -122,7 +121,7 @@ if($html_type eq '-f') {
 			next;
 		}
 		if($_ =~ /^~\s/) {
-			my ($valid, $warn) = split ':', $';
+			my ($valid, $warn) = split '/', $';
 			my @valid_list = split ' ', $valid;
 			my @valid = map {transRule $_} @valid_list;
 			my %rule = (
@@ -133,7 +132,9 @@ if($html_type eq '-f') {
 			next;
 		}
 	}
-
+	if(%currData) {
+		push @{$data_hash{"root"}->{"children"}}, {%currData};
+	}
 	# my $text = $json->pretty->encode(\%data_hash);
 
 	my $text = $json->encode(\%data_hash);

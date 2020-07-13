@@ -1,30 +1,26 @@
 const createItem = (data) => {
   return `
-  <FormItem label="${data.label}">
-        <${data.tag} v-model="${data.key}" placehoder="${data.placehoder}" />
+  <FormItem label="${data.label}" prop="${data.key}">
+        <${data.tag} v-model="formData.${data.key}" placehoder="${data.placehoder}" />
   </FormItem>
-  `;
-};
+  `
+}
 
 const createRule = (data) => {
-  console.log(data);
   const createRuleItem = (rule) => {
     return `
-        { require: true, message: '${rule.warn}', ${rule.valid
-      .map((it) => it)
-      .join(",")}}
-      `;
-  };
+        { message: '${rule.warn}', ${rule.valid.map((it) => it).join(",")}}
+      `
+  }
   return `
     ${data.key}: [
         ${data.rules.map((it) => createRuleItem(it)).join(",")}
     ]
-    `;
-};
+    `
+}
 
 const createForm = (json) => {
-  const data = JSON.parse(json);
-  console.log(data.root);
+  const data = JSON.parse(json)
   return `<template>
         <Form ref="formData" :model="formData" :rules="formRule" ${data.root.attr.join(
           " "
@@ -67,7 +63,7 @@ const createForm = (json) => {
       }
   }
   </script>
-  `;
-};
+  `
+}
 
-module.exports = createForm;
+module.exports = createForm

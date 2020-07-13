@@ -1,11 +1,11 @@
-#! :label-width(80) label-position(left)
+#! :label-width(80) label-position(right) style(width:500px)
 
-- username / 用户名 : 请输入用户名
-~ !('blur') : 必填项
+- 用户名 : username / 请输入用户名
+~ !! on('blur') / 必填项
 
-- password / 密码 : 请输入密码
-~ !('change') : 密码是必填项
-~ min(6) max(23) : 长度必须在6到24位之间
-> type password
-    >> Icon type(ios-person-outline) slot(prepend)
+- 密码 : password / 请输入密码
+~ !! on('change') / 密码是必填项
+~ min(6) max(10) / 长度必须在6到10位之间
 
+- 手机号码 : phone / 请输入手机号码
+~ !! on('blur') / 手机号码是必填项
