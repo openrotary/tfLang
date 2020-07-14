@@ -3,7 +3,7 @@
 const exec = require("child_process").exec;
 const prettier = require("prettier");
 const fs = require("fs");
-const [node, script, html_type, read_url, write_url] = process.argv;
+const [, , html_type, read_url, write_url] = process.argv;
 
 const createForm = require("./createForm");
 

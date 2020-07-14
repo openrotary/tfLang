@@ -3,24 +3,24 @@ const createItem = (data) => {
   <FormItem label="${data.label}" prop="${data.key}">
         <${data.tag} v-model="formData.${data.key}" placehoder="${data.placehoder}" />
   </FormItem>
-  `
-}
+  `;
+};
 
 const createRule = (data) => {
   const createRuleItem = (rule) => {
     return `
         { message: '${rule.warn}', ${rule.valid.map((it) => it).join(",")}}
-      `
-  }
+      `;
+  };
   return `
     ${data.key}: [
         ${data.rules.map((it) => createRuleItem(it)).join(",")}
     ]
-    `
-}
+    `;
+};
 
 const createForm = (json) => {
-  const data = JSON.parse(json)
+  const data = JSON.parse(json);
   return `<template>
         <Form ref="formData" :model="formData" :rules="formRule" ${data.root.attr.join(
           " "
@@ -45,10 +45,10 @@ const createForm = (json) => {
       methods: {
           resetData(data) {
             if(!data) {
-                this.formData = data
+                this.formData = resetData()
                 return
             }
-            this.formData = resetData()
+            this.formData = data
           },
           handleValidate() {
               return new Promise(resolve => {
@@ -63,7 +63,7 @@ const createForm = (json) => {
       }
   }
   </script>
-  `
-}
+  `;
+};
 
-module.exports = createForm
+module.exports = createForm;

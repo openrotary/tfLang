@@ -46,10 +46,10 @@ export default {
   methods: {
     resetData(data) {
       if (!data) {
-        this.formData = data
+        this.formData = resetData()
         return
       }
-      this.formData = resetData()
+      this.formData = data
     },
     handleValidate() {
       return new Promise((resolve) => {
